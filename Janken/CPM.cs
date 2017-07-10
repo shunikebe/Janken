@@ -7,24 +7,12 @@ using System.Threading.Tasks;
 namespace Janken
 {
     class CPM:Brain{
+        public CPM(string name) : base(name) { }
 
-
-        public CPM() { }
-
-        public override int select(){
-            int n = 0;
+        public override void select(){
             Random r = new Random();
-
-            n = r.Next(1,4);
-            Console.WriteLine(n);
-            if (n == 1) { Console.WriteLine("ＣＰＭ：グー"); }
-            else if (n == 2) { Console.WriteLine("ＣＰＭ：チョキ"); }
-            else if (n == 3) { Console.WriteLine("ＣＰＭ：パー"); }
-
-            return n;
-        }
-
-
+            hand = r.Next(1,4);
+            }
 
     }
 }
