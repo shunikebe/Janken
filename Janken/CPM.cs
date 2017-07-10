@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Janken
+﻿namespace Janken
 {
-    class CPM:Brain{
-        public CPM(string name) : base(name) { }
+    using System;
 
-        public override void select(){
+    internal class CPM : Brain
+    {
+        public CPM(string name)
+            : base(name)
+        {
+        }
+
+        public override void Select()
+        {
             Random r = new Random();
-            hand = r.Next(1,4);
+            this.Hand = r.Next(1, 4);
             }
-
     }
 }
