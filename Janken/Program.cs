@@ -2,7 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Text;
 
     internal class Program
     {
@@ -13,16 +15,32 @@
             int pn, cn;
 
             // 人数決め
-            Menber(out pn, out cn);
-            brain = new Brain[pn + cn];
-            for (int i = 0; i < pn; i++)
+            Console.WriteLine("初めから：１");
+            Console.WriteLine("続きから：２");
+            string start = Console.ReadLine();
+            if (start == "1")
             {
-                brain[i] = new Player("P" + i);
-            }
+                Menber(out pn, out cn);
+                brain = new Brain[pn + cn];
+                for (int i = 0; i < pn; i++)
+                {
+                    brain[i] = new Player("P" + i);
+                }
 
-            for (int i = 0; i < cn; i++)
+                for (int i = 0; i < cn; i++)
+                {
+                    brain[i + pn] = new CPM("C" + i);
+                }
+            }
+            else if (start == "2")
             {
-                brain[i + pn] = new CPM("C" + i);
+                Load(out brain, out pn, out cn);
+            }
+            else
+            {
+                brain = new Brain[1];
+                pn = cn = 0;
+                flag = false;
             }
 
             while (flag)
@@ -57,9 +75,11 @@
                     // 結果を表示
                     for (int i = 0; i < brain.Length; i++)
                     {
+                        brain[i].Fight++;
                         if (brain[i].Result)
                         {
                             Console.WriteLine(brain[i].Name + ": " + brain[i].Handname() + ":勝ち");
+                            brain[i].Win++;
                         }
                         else
                         {
@@ -73,6 +93,19 @@
                     if (s == "Y" || s == "y")
                     {
                         flag = true;
+                    }
+                    else
+                    {
+                        Save(brain, pn, cn);
+
+                        Console.WriteLine("今回の勝率");
+                        for (int i = 0; i < brain.Length; i++)
+                        {
+                            Console.WriteLine(brain[i].Name + ":" + (100 * brain[i].Win / brain[i].Fight) + "%");
+                        }
+
+                        Console.WriteLine("続行するには何かキーを押してください。");
+                        Console.Read();
                     }
                 }
             }
@@ -190,6 +223,80 @@
                 if (cn != 0)
                 {
                     break;
+                }
+            }
+        }
+
+        private static void Save(Brain[] brain, int pn, int cn)
+        {
+            if (Directory.Exists("Data") == false)
+            {
+                Directory.CreateDirectory("Data");
+            }
+
+            try
+            {
+                using (StreamWriter writer = new StreamWriter(
+                    @"Data\Data.csv", false, Encoding.Default))
+                {
+                    writer.WriteLine(pn + "," + cn);
+                    for (int i = 0; i < brain.Length; i++)
+                    {
+                        writer.WriteLine(brain[i].Name + "," + brain[i].Win + "," + brain[i].Fight + "," + (100.0 * brain[i].Win / brain[i].Fight));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("エラーが起きました");
+            }
+        }
+
+        private static void Load(out Brain[] brain, out int pn, out int cn)
+        {
+            if (File.Exists(@"Data\Data.csv") == false)
+            {
+                pn = cn = 0;
+                brain = new Brain[pn + cn];
+            }
+            else
+            {
+                try
+                {
+                    using (StreamReader reader = new StreamReader(
+                        @"Data\Data.csv", Encoding.Default))
+                    {
+                        string line;
+                        line = reader.ReadLine();
+                        string[] ward = line.Split(',');
+                        pn = int.Parse(ward[0]);
+                        cn = int.Parse(ward[1]);
+                        brain = new Brain[pn + cn];
+                        for (int a = 0; a < pn; a++)
+                        {
+                            brain[a] = new Player("P" + a);
+                        }
+
+                        for (int a = 0; a < cn; a++)
+                        {
+                            brain[a + pn] = new CPM("C" + a);
+                        }
+
+                        int i = 0;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            string[] ward1 = line.Split(',');
+                            brain[i].Win = int.Parse(ward1[1]);
+                            brain[i].Fight = int.Parse(ward1[2]);
+                            i++;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("エラーが起きました");
+                    pn = cn = 0;
+                    brain = new Brain[pn + cn];
                 }
             }
         }
