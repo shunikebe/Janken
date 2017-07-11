@@ -13,35 +13,43 @@
             Brain[] brain;
             bool flag = true;
             int pn, cn;
+            string start = string.Empty;
 
-            // 人数決め
-            Console.WriteLine("初めから：１");
-            Console.WriteLine("続きから：２");
-            string start = Console.ReadLine();
-            if (start == "1")
+            // じゃんけんの設定
+            do
             {
-                Menber(out pn, out cn);
-                brain = new Brain[pn + cn];
-                for (int i = 0; i < pn; i++)
+                Console.WriteLine("初めから：１");
+                Console.WriteLine("続きから：２");
+                start = Console.ReadLine();
+                if (start == "1")
                 {
-                    brain[i] = new Player("P" + i);
-                }
+                    while (Menber(out pn, out cn))
+                    {
+                    }
 
-                for (int i = 0; i < cn; i++)
+                    brain = new Brain[pn + cn];
+                    for (int i = 0; i < pn; i++)
+                    {
+                        brain[i] = new Player("P" + i);
+                    }
+
+                    for (int i = 0; i < cn; i++)
+                    {
+                        brain[i + pn] = new CPM("C" + i);
+                    }
+                }
+                else if (start == "2")
                 {
-                    brain[i + pn] = new CPM("C" + i);
+                    Load(out brain, out pn, out cn);
+                }
+                else
+                {
+                    start = string.Empty;
+                    brain = new Brain[1];
+                    pn = cn = 0;
                 }
             }
-            else if (start == "2")
-            {
-                Load(out brain, out pn, out cn);
-            }
-            else
-            {
-                brain = new Brain[1];
-                pn = cn = 0;
-                flag = false;
-            }
+            while (start == string.Empty);
 
             while (flag)
             {
@@ -55,7 +63,7 @@
                 for (int i = 0; i < cn; i++)
                 {
                     brain[i + pn].Select();
-                    System.Threading.Thread.Sleep(5);
+                    System.Threading.Thread.Sleep(4);
                 }
 
                 flag = Judge(ref brain);
@@ -101,7 +109,7 @@
                         Console.WriteLine("今回の勝率");
                         for (int i = 0; i < brain.Length; i++)
                         {
-                            Console.WriteLine(brain[i].Name + ":" + (100 * brain[i].Win / brain[i].Fight) + "%");
+                            Console.WriteLine(brain[i].Name + ":" + Math.Round(100.0 * brain[i].Win / brain[i].Fight, 1) + "%");
                         }
 
                         Console.WriteLine("続行するには何かキーを押してください。");
@@ -187,9 +195,9 @@
             }
         }
 
-        private static void Menber(out int pn, out int cn)
+        private static bool Menber(out int pn, out int cn)
         {
-            pn = cn = 0;
+            pn = cn = -1;
             while (true)
             {
                 Console.WriteLine("ユーザーの人数を教えてください");
@@ -202,7 +210,7 @@
                     Console.WriteLine(ex.Message);
                 }
 
-                if (pn != 0)
+                if (pn >= 0)
                 {
                     break;
                 }
@@ -220,10 +228,20 @@
                     Console.WriteLine(ex.Message);
                 }
 
-                if (cn != 0)
+                if (cn >= 0)
                 {
                     break;
                 }
+            }
+
+            if (pn + cn >= 2)
+            {
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("合計で2人以上にしてください。");
+                return true;
             }
         }
 
@@ -242,7 +260,7 @@
                     writer.WriteLine(pn + "," + cn);
                     for (int i = 0; i < brain.Length; i++)
                     {
-                        writer.WriteLine(brain[i].Name + "," + brain[i].Win + "," + brain[i].Fight + "," + (100.0 * brain[i].Win / brain[i].Fight));
+                        writer.WriteLine(brain[i].Name + "," + brain[i].Win + "," + brain[i].Fight + "," + Math.Round(100.0 * brain[i].Win / brain[i].Fight, 1));
                     }
                 }
             }
