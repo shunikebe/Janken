@@ -12,7 +12,7 @@ namespace Janken{
 
             Brain[] brain;
             bool flag = true;
-            int pn, cn;
+            int pn = 0, cn = 0;
             string start = string.Empty;
 
             // じゃんけんの設定
@@ -21,16 +21,15 @@ namespace Janken{
                 Console.WriteLine("続きから：２");
                 start = Console.ReadLine();
                 if (start == "1"){
-                    while (Menber(out pn, out cn)){ }
+                    while (Member(out pn, out cn)){ }
                     brain = new Brain[pn + cn];
                     for (int i = 0; i < pn; i++){brain[i] = new Player("P" + i);}
-                    for (int i = 0; i < cn; i++){brain[i + pn] = new CPM("C" + i);}
+                    for (int i = 0; i < cn; i++){brain[i + pn] = new CPU("C" + i);}
 
                 }else if (start == "2"){Load(out brain, out pn, out cn);}
                 else{
                     start = string.Empty;
                     brain = new Brain[1];
-                    pn = cn = 0;
                 }
             }while (start == string.Empty);
 
@@ -39,7 +38,7 @@ namespace Janken{
                 // じゃんけん開始player
                 for (int i = 0; i < pn; i++){brain[i].Select();}
 
-                // じゃんけん開始CPM
+                // じゃんけん開始CPU
                 for (int i = 0; i < cn; i++){
                     brain[i + pn].Select();
                     System.Threading.Thread.Sleep(4);
@@ -55,15 +54,9 @@ namespace Janken{
                     Console.WriteLine("あいこです。");
                 }
                 else{ // 決着が着いたとき
-                  // 結果を表示
+                    // 結果を表示&勝利数などの処理
                     for (int i = 0; i < brain.Length; i++){
-                        brain[i].Fight++;
-                        if (brain[i].Result){
-                            Console.WriteLine(brain[i].Name + ": " + brain[i].Handname() + ":勝ち");
-                            brain[i].Win++;
-                        }else{
-                            Console.WriteLine(brain[i].Name + ": " + brain[i].Handname() + ":負け");
-                        }
+                        Console.WriteLine(brain[i].Name + ": " + brain[i].Handname() + ": " + brain[i].Resultname());
                     }
 
                     string s;
@@ -128,7 +121,7 @@ namespace Janken{
 
         }
 
-        private static bool Menber(out int pn, out int cn){
+        private static bool Member(out int pn, out int cn){
 
             pn = cn = -1;
             while (true){
@@ -187,7 +180,7 @@ namespace Janken{
                 pn = cn = 1;
                 brain = new Brain[pn + cn];
                 for (int a = 0; a < pn; a++) { brain[a] = new Player("P" + a); }
-                for (int a = 0; a < cn; a++) { brain[a + pn] = new CPM("C" + a); }
+                for (int a = 0; a < cn; a++) { brain[a + pn] = new CPU("C" + a); }
             }
             else{
                 try{
@@ -199,7 +192,7 @@ namespace Janken{
                         cn = int.Parse(ward[1]);
                         brain = new Brain[pn + cn];
                         for (int a = 0; a < pn; a++){brain[a] = new Player("P" + a);}
-                        for (int a = 0; a < cn; a++){brain[a + pn] = new CPM("C" + a);}
+                        for (int a = 0; a < cn; a++){brain[a + pn] = new CPU("C" + a);}
 
                         int i = 0;
                         while ((line = reader.ReadLine()) != null){
@@ -215,7 +208,7 @@ namespace Janken{
                     pn = cn = 1;
                     brain = new Brain[pn + cn];
                     for (int a = 0; a < pn; a++) { brain[a] = new Player("P" + a); }
-                    for (int a = 0; a < cn; a++) { brain[a + pn] = new CPM("C" + a); }
+                    for (int a = 0; a < cn; a++) { brain[a + pn] = new CPU("C" + a); }
                 }
             }
         }

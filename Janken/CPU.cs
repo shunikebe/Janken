@@ -1,9 +1,9 @@
 ﻿namespace Janken{
     using System;
 
-    internal class CPM : Brain{
+    internal class CPU : Brain{
 
-        public CPM(string name):base(name){ }
+        public CPU(string name):base(name){ }
 
         public override void Select(){
 

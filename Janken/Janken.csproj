@@ -46,7 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Brain.cs" />
-    <Compile Include="CPM.cs" />
+    <Compile Include="CPU.cs" />
     <Compile Include="Difinition.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
