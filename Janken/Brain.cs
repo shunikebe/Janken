@@ -4,7 +4,7 @@
 
         public string Name { get; set; }
         public int Hand { get; set; } // じゃんけんの手１：グー、２：チョキ、３：パー
-        public bool Result { get; set; } //じゃんけんの結果 0:負け、1:勝ち、2:あいこ
+        public bool Result { get; set; } //勝ったかどうか
         public int Win { get; set; } // 勝った数
         public int Fight { get; set; } // 試合数
 
