@@ -1,27 +1,44 @@
-﻿using System;
+﻿namespace Janken{
 
-namespace Janken{
+    internal abstract class Player{
 
-    internal class Player : Brain{
+        public string Name { get; set; }
+        public int Hand { get; set; } // じゃんけんの手１：グー、２：チョキ、３：パー
+        public bool Result { get; set; } //勝ったかどうか
+        public int Win { get; set; } // 勝った数
+        public int Fight { get; set; } // 試合数
 
-        public Player(string name):base(name){ }
-
-        public override void Select(){
-
-            Console.WriteLine(Name + "さん、じゃんけんの手を入れてください。");
-            Console.WriteLine("グー：１/ チョキ：２/ パー：３");
-
-            while (true){
-                try{Hand = int.Parse(Console.ReadLine());}
-                catch (FormatException ex){
-                    Console.WriteLine(ex.Message);
-                    Hand = 0;
-                }
-                if (Hand == Difinition.Ro || Hand == Difinition.Sc || Hand == Difinition.Pa){break;}
-                else{
-                    Console.WriteLine("グー：１/ チョキ：２/ パー：３\nを入力してください。");
-                }
-            }
+        public Player(string name){
+            Name = name;
+            Win = 0;
+            Fight = 0;
         }
+
+        public abstract void Select();
+        public string Handname(){
+            string s = string.Empty;
+            if (Hand == Difinition.Ro){s = "グー";}
+            else if (Hand == Difinition.Sc){s = "チョキ";}
+            else if (Hand == Difinition.Pa){s = "パー";}
+
+            return s;
+        }
+
+        public string Resultname(){
+            string s = string.Empty;
+            if (Result) {
+                s = "勝ち";
+                Fight++;
+                Win++;
+            }
+            else {
+                s = "負け";
+                Fight++;
+            }
+
+            return s;
+        }
+
+
     }
 }

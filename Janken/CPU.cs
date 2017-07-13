@@ -1,14 +1,19 @@
 ﻿namespace Janken{
     using System;
 
-    internal class CPU : Brain{
+    internal class CPU : Player{
 
-        public CPU(string name):base(name){ }
+        private int seed;
+        private Random r;
+
+        public CPU(string name, int seed):base(name){
+            this.seed = seed;
+            r = new Random(seed);
+        }
 
         public override void Select(){
-
-            Random r = new Random();
             Hand = r.Next(1, 4);
         }
+
     }
 }
