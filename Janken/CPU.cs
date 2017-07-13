@@ -12,7 +12,7 @@
         }
 
         public override void Select(){
-            Hand = r.Next(1, 4);
+            hand = r.Next(1, 4);
         }
 
     }

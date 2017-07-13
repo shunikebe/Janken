@@ -8,16 +8,16 @@ namespace Janken{
 
         public override void Select(){
 
-            Console.WriteLine(Name + "さん、じゃんけんの手を入れてください。");
+            Console.WriteLine(name + "さん、じゃんけんの手を入れてください。");
             Console.WriteLine("グー：１/ チョキ：２/ パー：３");
 
             while (true){
-                try{Hand = int.Parse(Console.ReadLine());}
+                try{hand = int.Parse(Console.ReadLine());}
                 catch (FormatException ex){
                     Console.WriteLine(ex.Message);
-                    Hand = 0;
+                    hand = 0;
                 }
-                if (Hand == Difinition.Ro || Hand == Difinition.Sc || Hand == Difinition.Pa){break;}
+                if (hand == Definition.Ro || hand == Definition.Sc || hand == Definition.Pa){break;}
                 else{
                     Console.WriteLine("グー：１/ チョキ：２/ パー：３\nを入力してください。");
                 }

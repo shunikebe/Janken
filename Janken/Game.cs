@@ -8,9 +8,9 @@ namespace Janken{
 
     internal abstract class Game{
 
-        protected int un { get; set; }
-        protected int cn { get; set; }
-        protected Player[] player { get; set; }
+        public int un { get; set; }
+        public int cn { get; set; }
+        public Player[] player { get; private set; }
 
         public Game() {
             un = cn = 0;
@@ -52,11 +52,13 @@ namespace Janken{
 
             }
 
+        }
+        //playerインスタンスを生成
+        public void Make(){
             player = new Player[un + cn];
             Random r = new Random();
             for (int i = 0; i < un; i++) { player[i] = new User("P" + i); }
             for (int i = 0; i < cn; i++) { player[i + un] = new CPU("C" + i, r.Next()); }
-
         }
 
         //ゲームの内容

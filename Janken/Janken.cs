@@ -27,7 +27,7 @@ namespace Janken{
                 using (StreamWriter writer = new StreamWriter(@"Data\Data.csv", false, Encoding.Default)){
                     writer.WriteLine(un + "," + cn);
                     for (int i = 0; i < player.Length; i++){
-                        writer.WriteLine(player[i].Name + "," + player[i].Win + "," + player[i].Fight + "," + Math.Round(100.0 * player[i].Win / player[i].Fight, 1));
+                        writer.WriteLine(player[i].name + "," + player[i].win + "," + player[i].fight + "," + Math.Round(100.0 * player[i].win / player[i].fight, 1));
                     }
                 }
             }
@@ -37,43 +37,31 @@ namespace Janken{
         }
 
         public override void Load(){
-            Random r = new Random();
-            if (File.Exists(@"Data\Data.csv") == false){
-                Console.WriteLine("存在していなかったのでp0とc0を生成しました");
-                un = cn = 1;
-                player = new Player[un + cn];
-                for (int a = 0; a < un; a++) { player[a] = new User("P" + a); }
-                for (int a = 0; a < cn; a++) { player[a + un] = new CPU("C" + a, r.Next()); }
-            }else{
-                try{
-                    using (StreamReader reader = new StreamReader(@"Data\Data.csv", Encoding.Default)){
-                        string line;
-                        line = reader.ReadLine();
-                        string[] ward = line.Split(',');
-                        un = int.Parse(ward[0]);
-                        cn = int.Parse(ward[1]);
-                        player = new Player[un + cn];
-                        for (int a = 0; a < un; a++) { player[a] = new User("P" + a); }
-                        for (int a = 0; a < cn; a++) { player[a + un] = new CPU("C" + a, r.Next()); }
 
-                        int i = 0;
-                        while ((line = reader.ReadLine()) != null){
-                            string[] ward1 = line.Split(',');
-                            player[i].Win = int.Parse(ward1[1]);
-                            player[i].Fight = int.Parse(ward1[2]);
-                            i++;
-                        }
+            try{
+                using (StreamReader reader = new StreamReader(@"Data\Data.csv", Encoding.Default)){
+                    string line;
+                    line = reader.ReadLine();
+                    string[] ward = line.Split(',');
+                    un = int.Parse(ward[0]);
+                    cn = int.Parse(ward[1]);
+                    Make();
+                    int i = 0;
+                    while ((line = reader.ReadLine()) != null){
+                        string[] ward1 = line.Split(',');
+                        player[i].win = int.Parse(ward1[1]);
+                        player[i].fight = int.Parse(ward1[2]);
+                        i++;
                     }
                 }
-                catch (Exception e){
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("存在していなかったのでp0とc0を生成しました");
-                    un = cn = 1;
-                    player = new Player[un + cn];
-                    for (int a = 0; a < un; a++) { player[a] = new User("P" + a); }
-                    for (int a = 0; a < cn; a++) { player[a + un] = new CPU("C" + a, r.Next()); }
-                }
             }
+            catch (Exception e){
+                Console.WriteLine(e.Message);
+                Console.WriteLine("読み取りに失敗したのでp0とc0を生成しました");
+                un = cn = 1;
+                Make();
+            }
+
         }
 
 
@@ -85,106 +73,163 @@ namespace Janken{
                 Console.WriteLine("初めから：１");
                 Console.WriteLine("続きから：２");
                 start = Console.ReadLine();
-                if (start == "1"){ Member();}
-                else if (start == "2") { Load(); }
-                else{
-                    start = string.Empty;
-                    player = new Player[1];
+                if (start == "1" || start == "１"){
+                    Member();
+                    Make();
                 }
+                else if (start == "2" || start == "２") { Load(); }
+                else{start = string.Empty;}
             } while (start == string.Empty);
         }
-
         //じゃんけんの本体
         private void Frow(){
 
-            bool flag = true;
             //ゲーム開始
-            while (flag){
+            while (true){
                 //じゃんけんの手を決める
                 for (int i = 0; i < un + cn; i++) { player[i].Select(); }
 
-                flag = Judge();
-
-                if (flag){ // あいこの時
-                  // 結果を表示
-                    for (int i = 0; i < player.Length; i++){
-                        Console.WriteLine(player[i].Name + ": " + player[i].Handname());
-                    }
+                if (Judge()){ // あいこの時
                     Console.WriteLine("あいこです。");
                 }
                 else{ // 決着が着いたとき
-                    // 結果を表示&勝利数などの処理
-                    for (int i = 0; i < player.Length; i++){
-                        Console.WriteLine(player[i].Name + ": " + player[i].Handname() + ": " + player[i].Resultname());
-                    }
-                    flag = Tryagain();
+                   if (!Again()) { break; }
                 }
             }
 
         }
 
-        //じゃんけんの勝敗判定
+
+        //試合結果があいこかどうか判断
+        //試合結果を反映・出力
         private bool Judge(){
 
-            int n, a, b;
-            List<int> hands = new List<int>();
-
-            // 出された手の種類を数えている
-            for (int i = 0; i < player.Length; i++){
-                if (hands.Contains(player[i].Hand) == false){
-                    hands.Add(player[i].Hand);
-                }
-            }
-
-            if (hands.Count() == 2){ // 2種類なら勝敗が決まる
-                a = hands[0];
-                b = hands[1];
-
+            int a, b, n = 0;
+            //試合結果があいこかどうか判断
+            if (TypeCount(out a, out b) == 2){ // 2種類なら勝敗が決まる
                 // 元Judge(a,b)
                 if (a < b){
-                    if (a == Difinition.Ro && b == Difinition.Pa) { n = b; } // b WIN
+                    if (a == Definition.Ro && b == Definition.Pa) { n = b; } // b WIN
                     else { n = a; } // a WIN
                 }else if (a > b){
-                    if (a == Difinition.Pa && b == Difinition.Ro) { n = a; } // a WIN
+                    if (a == Definition.Pa && b == Definition.Ro) { n = a; } // a WIN
                     else { n = b; } // b WIN
-                }else { n = 0; } // あいこ
-                // 元Judge(a,b)ここまで
-
-            }
-            else { n = 0; } // それ以外ならあいこ
-
-            if (n == 0) { return true; } // あいこ
-            else{ // 決着が決まった時：nの値が勝った手
-                for (int i = 0; i < player.Length; i++){
-                    if (player[i].Hand == n){
-                        player[i].Result = true;
-                    }else{
-                        player[i].Result = false;
-                    }
                 }
-                return false;
+                //else { n = 0; } // あいこ
+                // 元Judge(a,b)ここまで
             }
+            //else { n = 0; }// それ以外ならあいこ
+
+            //試合結果を反映・出力
+            WriteResult(n);
+            ShowResult();
+
+            if (n == 0) {return true; } // あいこ
+            else{ return false; }
 
         }
+        //全プレイヤーが出した手の種類を数える
+        private int TypeCount(out int a, out int b){
+
+            a = b = 0;
+            List<int> hands = new List<int>();
+
+            for (int i = 0; i < player.Length; i++){
+                if (hands.Contains(player[i].hand) == false){
+                    hands.Add(player[i].hand);
+                }
+            }
+
+            a = hands[0];
+            try { b = hands[1]; }
+            catch (Exception){ b = 0; }
+
+            return hands.Count();
+        }
+        //各Playerの結果を書き込む
+        private void WriteResult(int n){
+            for (int i = 0; i < player.Length; i++){
+
+                if (n == 0) { player[i].result = Definition.DRAW; }
+                else if (player[i].hand == n){
+                    player[i].result = Definition.WIN;
+                    player[i].fight++;
+                    player[i].win++;
+                }else{
+                    player[i].result = Definition.LOSE;
+                    player[i].fight++;
+                }
+
+            }
+        }
+        //各Playerの結果を表示する
+        private void ShowResult(){
+            for (int i = 0; i < player.Length; i++){
+                Console.WriteLine(player[i].name + ": " + Handname(i) + Resultname(i));
+            }
+        }
+        //出した手の名前
+        private string Handname(int i){
+            string s = string.Empty;
+            if (player[i].hand == Definition.Ro) { s = "グー"; }
+            else if (player[i].hand == Definition.Sc) { s = "チョキ"; }
+            else if (player[i].hand == Definition.Pa) { s = "パー"; }
+
+            return s;
+        }
+        //試合結果の名前
+        private string Resultname(int i){
+            string s = string.Empty;
+
+            if (player[i].result == Definition.WIN){
+                s = ":勝ち";
+            }
+            else if (player[i].result == Definition.LOSE){
+                s = ":負け";
+            }
+            else if (player[i].result == Definition.DRAW){
+                s = string.Empty;
+            }
+            return s;
+        }
+
 
         //再試行の判定
-        private bool Tryagain(){
+        private bool Again(){
 
             string s;
             Console.WriteLine("もう一度しますか？\nする場合は\"Y\"を押してください");
             s = Console.ReadLine();
-            if (s == "Y" || s == "y") { return true; }
+            if (s == "Y" || s == "y" || s == string.Empty) { return true; }
             else{
                 Save();
-                Console.WriteLine("今回の勝率");
-                for (int i = 0; i < player.Length; i++){
-                    Console.WriteLine(player[i].Name + ":" + Math.Round(100.0 * player[i].Win / player[i].Fight, 1) + "%");
-                }
+                ShowWinRate();
                 return false;
             }
 
         }
+        //各Playerの勝率を表示する
+        private void ShowWinRate(){
 
+            string s1 = ":", s2 = "%";
+            Console.WriteLine("今回の勝率");
+
+            for (int i = 0; i < player.Length; i++){
+                double rate = Math.Round(100.0 * player[i].win / player[i].fight, 1);
+
+                //小数点を合わせるためにspaceを入れる
+                if (rate < 10) { s1 = ":  "; }
+                else if (rate < 100) { s1 = ": "; }
+                else { s1 = ":"; }
+
+                //小数点以下が0の時、0を付け足す
+                if (rate == (int)rate) { s2 = ".0%"; }
+                else { s2 = "%"; }
+
+                Console.WriteLine(player[i].name + s1 + rate + s2);
+            }
+
+        }
 
     }
 }
