@@ -10,8 +10,13 @@ namespace Janken{
 
         private static void Main(string[] args){
 
-            Game janken = new Janken();
-            janken.Content();
+            Game game = new Janken();
+
+            game.Setup();
+            game.Run();
+            game.Closed();
+
+
             Console.WriteLine("続行するには何かキーを押してください。");
             Console.Read();
         }

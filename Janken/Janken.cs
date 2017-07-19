@@ -10,12 +10,6 @@ namespace Janken{
 
         public Janken(){ }
 
-        public override void Content(){
-            // じゃんけんの設定
-            SetUp();
-            //じゃんけん開始
-            Frow();
-        }
 
         public override void Save(){
 
@@ -66,7 +60,7 @@ namespace Janken{
 
 
         //じゃんけんの設定
-        private void SetUp(){
+        public override void Setup(){
 
             string start = string.Empty;
             do {
@@ -77,13 +71,12 @@ namespace Janken{
                     Member();
                     Make();
                 }
-                else if (start == "2" || start == "２") { Load(); }
+                else if (start == "2" || start == "２") {Load();}
                 else{start = string.Empty;}
             } while (start == string.Empty);
         }
         //じゃんけんの本体
-        private void Frow(){
-
+        public override void Run(){
             //ゲーム開始
             while (true){
                 //じゃんけんの手を決める
@@ -99,6 +92,10 @@ namespace Janken{
 
         }
 
+        public override void Closed(){
+            Save();
+            ShowWinRate();
+        }
 
         //試合結果があいこかどうか判断
         //試合結果を反映・出力
@@ -194,42 +191,6 @@ namespace Janken{
         }
 
 
-        //再試行の判定
-        private bool Again(){
-
-            string s;
-            Console.WriteLine("もう一度しますか？\nする場合は\"Y\"を押してください");
-            s = Console.ReadLine();
-            if (s == "Y" || s == "y" || s == string.Empty) { return true; }
-            else{
-                Save();
-                ShowWinRate();
-                return false;
-            }
-
-        }
-        //各Playerの勝率を表示する
-        private void ShowWinRate(){
-
-            string s1 = ":", s2 = "%";
-            Console.WriteLine("今回の勝率");
-
-            for (int i = 0; i < player.Length; i++){
-                double rate = Math.Round(100.0 * player[i].win / player[i].fight, 1);
-
-                //小数点を合わせるためにspaceを入れる
-                if (rate < 10) { s1 = ":  "; }
-                else if (rate < 100) { s1 = ": "; }
-                else { s1 = ":"; }
-
-                //小数点以下が0の時、0を付け足す
-                if (rate == (int)rate) { s2 = ".0%"; }
-                else { s2 = "%"; }
-
-                Console.WriteLine(player[i].name + s1 + rate + s2);
-            }
-
-        }
 
     }
 }
