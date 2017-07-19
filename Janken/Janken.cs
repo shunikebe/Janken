@@ -113,6 +113,7 @@ namespace Janken{
 
             //試合結果を反映・出力
             WriteResult(n);
+            ProcessResult();
             ShowResult();
 
             if (n == 0) {return true; } // あいこ
@@ -131,26 +132,19 @@ namespace Janken{
                 }
             }
 
-            a = hands[0];
-            try { b = hands[1]; }
-            catch (Exception){ b = 0; }
+            if (hands.Count() == 2){
+                a = hands[0];
+                b = hands[1];
+            }
 
             return hands.Count();
         }
         //各Playerの結果を書き込む
         private void WriteResult(int n){
             for (int i = 0; i < player.Length; i++){
-
                 if (n == 0) { player[i].result = Definition.DRAW; }
-                else if (player[i].hand == n){
-                    player[i].result = Definition.WIN;
-                    player[i].fight++;
-                    player[i].win++;
-                }else{
-                    player[i].result = Definition.LOSE;
-                    player[i].fight++;
-                }
-
+                else if (player[i].hand == n){ player[i].result = Definition.WIN; }
+                else { player[i].result = Definition.LOSE; }
             }
         }
         //各Playerの結果を表示する

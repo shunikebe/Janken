@@ -14,6 +14,7 @@
             fight = 0;
         }
 
+
         public abstract void Select();
 
     }

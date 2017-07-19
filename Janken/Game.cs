@@ -74,6 +74,20 @@ namespace Janken{
             for (int i = 0; i < cn; i++) { player[i + un] = new CPU("C" + i, r.Next()); }
         }
 
+        //playerの結果をもとに処理をする
+        public void ProcessResult(){
+            for (int i = 0; i < player.Length; i++){
+                if (player[i].result == Definition.WIN){
+                    player[i].fight++;
+                    player[i].win++;
+                }
+                if (player[i].result == Definition.LOSE){
+                    player[i].fight++;
+                }
+            }
+        }
+
+
         //再試行の判定
         public bool Again(){
             string s;

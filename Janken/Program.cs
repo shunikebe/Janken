@@ -25,6 +25,7 @@ namespace Janken{
 
             if (gamename == "Janken") { game = new Janken(); }
 
+
             return game;
 
         }
