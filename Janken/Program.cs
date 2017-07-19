@@ -16,7 +16,6 @@ namespace Janken{
             game.Run();
             game.Closed();
 
-
             Console.WriteLine("続行するには何かキーを押してください。");
             Console.Read();
         }
