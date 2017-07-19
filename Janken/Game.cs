@@ -83,7 +83,6 @@ namespace Janken{
             else{return false;}
         }
 
-
         //各Playerの勝率を表示する
         public void ShowWinRate(){
 
@@ -106,9 +105,6 @@ namespace Janken{
             }
 
         }
-
-
-
 
         //ゲーム開始時
         public abstract void Setup();

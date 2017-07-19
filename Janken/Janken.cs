@@ -10,7 +10,6 @@ namespace Janken{
 
         public Janken(){ }
 
-
         public override void Save(){
 
             if (Directory.Exists("Data") == false){
@@ -29,7 +28,6 @@ namespace Janken{
                 Console.WriteLine(e.Message);
             }
         }
-
         public override void Load(){
 
             try{
@@ -58,8 +56,6 @@ namespace Janken{
 
         }
 
-
-        //じゃんけんの設定
         public override void Setup(){
 
             string start = string.Empty;
@@ -75,7 +71,6 @@ namespace Janken{
                 else{start = string.Empty;}
             } while (start == string.Empty);
         }
-        //じゃんけんの本体
         public override void Run(){
             //ゲーム開始
             while (true){
@@ -91,7 +86,6 @@ namespace Janken{
             }
 
         }
-
         public override void Closed(){
             Save();
             ShowWinRate();
@@ -189,8 +183,6 @@ namespace Janken{
             }
             return s;
         }
-
-
 
     }
 }
